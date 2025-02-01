@@ -17,4 +17,5 @@ Outputs
 
 ## Part 2
 Calculates Finbonacci sequence using recursion. With `n = 100`:
+
 ![100](/fib.png)
