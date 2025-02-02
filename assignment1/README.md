@@ -18,4 +18,4 @@ Outputs
 ## Part 2
 Calculates Finbonacci sequence using recursion. With `n = 100`:
 
-![part2](/fib.png)
+![part2](./fib.png)
