@@ -3,6 +3,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import Tile from '@/components/tile'
+import Card from '@/components/card'
 
 const Home = () => {
   const [pokemon, setPokemon] = useState<any[]>([]);
@@ -29,14 +30,18 @@ const Home = () => {
   }
 
   return (
-    <div className="flex w-full items-center justify-center min-h-screen">
-      <div className="flex w-1/2 flex-col items-center justify-center">
+    <div className="flex w-full items-center justify-start min-h-screen">
+      <div className="flex w-1/2 flex-col items-center justify-center p-5">
         {pokemon.map((pokemon) => (
-          <Tile key={pokemon.id} pokemon={pokemon} />
+          <div className="flex flex-col items-center justify-center w-full">
+            <Tile key={pokemon.id} pokemon={pokemon} setSelectedPokemon={setSelectedPokemon}/>
+          </div>
         ))}
       </div>
-      <div className="flex w-1/2">
-
+      <div className="flex min-w-1/2 items-center justify-center fixed top-0 right-0 h-screen">
+        {selectedPokemon && (
+          <Card pokemon={selectedPokemon} />
+        )}
       </div>
     </div>
   )
