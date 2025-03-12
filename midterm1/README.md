@@ -30,10 +30,10 @@ uvicorn main:app --reload
 
 ## Images
 Home Page:
-![home](/client/public/images/home.png)
+![home](home.png)
 
 Binder:
-![binder](/client/public/images/binder.png)
+![binder](binder.png)
 
 Create:
-![create](/client/public/images/create.png)
+![create](create.png)
