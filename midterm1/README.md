@@ -2,6 +2,8 @@
 
 This is a simulated Pokedex from the famous game "Pokemon".
 
+Uses the PokeAPI to retrieve 50 static pokemon, but also allows the user to create their own pokemon and also add / remove pokemon from their personal binder.
+
 ## Tech Stack
 
 Frontend: NextJS w/ React.js using Typescript + TailwindCSS
