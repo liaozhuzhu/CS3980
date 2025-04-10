@@ -17,7 +17,6 @@ const Home = () => {
       try {
         const res = await axios.get("http://127.0.0.1:8000/pokemon");
         setPokemon(res.data);
-        console.log(res.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -33,7 +32,6 @@ const Home = () => {
         { pokemon_id: selectedPokemon.id }, 
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log(res.data);
       setShowPopup(true);  
       setTimeout(() => setShowPopup(false), 2000);  
     } catch (error) {

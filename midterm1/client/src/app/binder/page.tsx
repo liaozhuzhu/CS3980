@@ -3,6 +3,7 @@ import axios from 'axios'
 import {useEffect, useState} from 'react'
 import Card from '@/components/card'
 import {Minus, Pencil, X} from 'lucide-react'
+import {useRouter} from 'next/navigation'
 
 const Binder = () => {
     type Pokemon = {
@@ -18,6 +19,8 @@ const Binder = () => {
     const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
     const [loading, setLoading] = useState(true);
     const [editPokemon, setEditPokemon] = useState<Pokemon | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
+    const router = useRouter();
     
     useEffect(() => {
         const fetchSavedPokemon = async () => {
@@ -26,22 +29,28 @@ const Binder = () => {
                 const resAll = await axios.get("http://127.0.01:8000/pokemon");
                 setSavedPokemon(res.data);
                 setAllPokemon(resAll.data);
-                console.log(res.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching saved Pokemon:", error);
             }
         }
+        const token = localStorage.getItem("token");
+        if (token) {
+            axios.get('http://localhost:8000/me', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+            }).then(res => {
+            setUsername(res.data.username);
+            }).catch(err => {
+            console.error("Error fetching user data:", err);
+            router.push("/login");
+            });
+        } else {
+            router.push("/login");
+        }
         fetchSavedPokemon();
     }, [])
-
-    if (loading) {
-        return (
-            <div className="flex w-full items-center justify-center h-[500px] flex-col">
-                <img src="/images/loading.gif" alt="loading" className="w-30 h-30" />
-            </div>
-        )
-    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -56,7 +65,6 @@ const Binder = () => {
                 data: { pokemon_id: id },
                 headers: { "Content-Type": "application/json" }
             });
-            console.log(res.data);
             setSavedPokemon(prev => prev.filter(pokemon => pokemon !== Number(id)));
             setEditPokemon(null);
         } catch (error) {
@@ -69,7 +77,6 @@ const Binder = () => {
             const res = await axios.put(`http://127.0.0.1:8000/pokemon`, editPokemon, {
                 headers: { "Content-Type": "application/json" },
             });
-            console.log(res.data);
     
             if (editPokemon) {
                 setAllPokemon(prev =>
@@ -83,10 +90,17 @@ const Binder = () => {
             console.error("Error editing Pokémon:", error);
         }
     };
-    
+
+    if (loading) {
+        return (
+            <div className="flex w-full items-center justify-center h-[500px] flex-col">
+                <img src="/images/loading.gif" alt="loading" className="w-30 h-30" />
+            </div>
+        )
+    }
 
     return (
-        <div className="flex justify-center items-center w-full">
+        <div className="flex justify-center items-center w-full flex-col">
             {editPokemon && (
                 <div className="min-h-screen w-full flex items-center justify-center bg-black text-white absolute z-50 top-0 left-0 w-full h-full bg-opacity-50">
                 <button onClick={() => setEditPokemon(null)} className="z-[10000000000] absolute right-10 top-30 w-10 h-10 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2">
@@ -153,27 +167,30 @@ const Binder = () => {
                 </div>
             </div>
             )}
-            {savedPokemon.length === 0 ? (
-                <div className="flex items-center justify-center w-full h-[500px]">
-                    <p className="text-xl font-semibold">No saved Pokemon</p>
-                </div>
-            ): (
-                <div className="grid grid-cols-4 gap-5 items-start mt-36">
-                {savedPokemon.map(id => allPokemon.map((pokemon:any) => pokemon.id === id ? (
-                    <div className="relative self-start" key={pokemon.id}>
-                        <Card pokemon={pokemon} size="small"/>
-                        <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
-                            <Minus size={20} />
-                        </button>
-                        {pokemon.hp && (
-                            <button className="absolute right-[-10px] top-[-10px] bg-blue-500 w-6 h-6 hover:bg-blue-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => setEditPokemon(pokemon)}>
-                                <Pencil size={12} />
-                            </button>
-                        )}
+            <div className="pt-28 w-full px-5">
+                {username && <h1 className="text-xl text-zinc-50 z-50 font-bold">{username}'s Binder</h1>}
+                {savedPokemon.length === 0 ? (
+                    <div className="flex items-center justify-center w-full h-[500px]">
+                        <p className="text-xl font-semibold">No saved Pokemon</p>
                     </div>
-                ) : null))}
+                ): (
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 items-start mt-10">
+                    {savedPokemon.map(id => allPokemon.map((pokemon:any) => pokemon.id === id ? (
+                        <div className="relative self-start" key={pokemon.id}>
+                            <Card pokemon={pokemon} size="small"/>
+                            <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
+                                <Minus size={20} />
+                            </button>
+                            {pokemon.hp && (
+                                <button className="absolute right-[-10px] top-[-10px] bg-blue-500 w-6 h-6 hover:bg-blue-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => setEditPokemon(pokemon)}>
+                                    <Pencil size={12} />
+                                </button>
+                            )}
+                        </div>
+                    ) : null))}
+                </div>
+                )}
             </div>
-            )}
         </div>
     )
 }
