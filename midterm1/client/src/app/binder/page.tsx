@@ -184,7 +184,7 @@ const Binder = () => {
                             <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
                                 <Minus size={20} />
                             </button>
-                            {pokemon.hp && (
+                            {!pokemon.public && (
                                 <button className="absolute right-[-10px] top-[-10px] bg-blue-500 w-6 h-6 hover:bg-blue-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => setEditPokemon(pokemon)}>
                                     <Pencil size={12} />
                                 </button>

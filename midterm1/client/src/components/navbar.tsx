@@ -15,10 +15,11 @@ const Navbar = () => {
   
   return (
     <div className="flex w-full items-center justify-between p-5 text-white outline fixed top-0 left-0 bg-zinc-950 z-[1000]">
+      <Link href="/">
       <img src="/images/pokedex.png" alt="pokedex" className="cursor-pointer h-10" />
+      </Link>
       {user ? (
         <nav className="flex space-x-4 items-center">
-          <Link href="/" className="hover:underline">Home</Link>
           <Link href="/create" className="hover:underline">Create</Link>
           <Link href="/binder" className="hover:underline">Binder</Link>
           <button 

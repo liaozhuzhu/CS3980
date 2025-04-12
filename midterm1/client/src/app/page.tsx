@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import Tile from '@/components/tile'
 import Card from '@/components/card'
 import { Download } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext';
 
 const Home = () => {
   const [pokemon, setPokemon] = useState<any[]>([]);
@@ -12,6 +13,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);  // State to control popup visibility
   const token = localStorage.getItem("token");
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +67,11 @@ const Home = () => {
       <div className="flex min-w-1/2 items-center justify-center flex-col mt-10">
         {selectedPokemon ? (
           <div className="flex items-center justify-center w-full h-full gap-2">
-            <button onClick={savePokemon} className="bg-green-500 rounded-lg text-zinc-800 font-bold p-2 cursor-pointer hover:bg-green-400">
-              <Download />
-            </button>
+            {user ? (
+              <button onClick={savePokemon} className="bg-green-500 rounded-lg text-zinc-800 font-bold p-2 cursor-pointer hover:bg-green-400">
+                <Download />
+              </button>
+            ) : <p>Login to save!</p>}
             <Card pokemon={selectedPokemon} size={"full"} />
           </div>
         ) : (
