@@ -1,6 +1,4 @@
 const Card = ({ pokemon, size }: { pokemon: any, size: 'small' | 'full' }) => {
-
-  console.log(pokemon);
   const types: string[] = [
     "normal",
     "fighting",

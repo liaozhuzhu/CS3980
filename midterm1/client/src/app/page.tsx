@@ -11,6 +11,7 @@ const Home = () => {
   const [selectedPokemon, setSelectedPokemon] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);  // State to control popup visibility
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,11 +30,16 @@ const Home = () => {
     try {
       const res = await axios.post(
         "http://127.0.0.1:8000/saved-pokemon",
-        { pokemon_id: selectedPokemon.id }, 
-        { headers: { "Content-Type": "application/json" } }
+        { pokemon_id: selectedPokemon.pid }, 
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setShowPopup(true);  
-      setTimeout(() => setShowPopup(false), 2000);  
+      setTimeout(() => setShowPopup(false), 1000);  
     } catch (error) {
       console.error("Error saving Pokemon:", error);
     }

@@ -23,18 +23,21 @@ const Binder = () => {
     const router = useRouter();
     
     useEffect(() => {
+        const token = localStorage.getItem("token");
         const fetchSavedPokemon = async () => {
             try {
-                const res = await axios.get("http://127.0.0.1:8000/saved-pokemon");
-                const resAll = await axios.get("http://127.0.01:8000/pokemon");
+                const res = await axios.get("http://127.0.0.1:8000/saved-pokemon", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
                 setSavedPokemon(res.data);
-                setAllPokemon(resAll.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching saved Pokemon:", error);
             }
         }
-        const token = localStorage.getItem("token");
         if (token) {
             axios.get('http://localhost:8000/me', {
             headers: {
@@ -78,13 +81,13 @@ const Binder = () => {
                 headers: { "Content-Type": "application/json" },
             });
     
-            if (editPokemon) {
-                setAllPokemon(prev =>
-                    prev.map(pokemon =>
-                        pokemon.id === id ? editPokemon : pokemon
-                    )
-                );
-            }
+            // if (editPokemon) {
+            //     setAllPokemon(prev =>
+            //         prev.map(pokemon =>
+            //             pokemon.id === id ? editPokemon : pokemon
+            //         )
+            //     );
+            // }
             setEditPokemon(null);
         } catch (error) {
             console.error("Error editing Pokémon:", error);
@@ -175,7 +178,7 @@ const Binder = () => {
                     </div>
                 ): (
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 items-start mt-10">
-                    {savedPokemon.map(id => allPokemon.map((pokemon:any) => pokemon.id === id ? (
+                    {savedPokemon.map((pokemon: any) => (
                         <div className="relative self-start" key={pokemon.id}>
                             <Card pokemon={pokemon} size="small"/>
                             <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
@@ -187,7 +190,7 @@ const Binder = () => {
                                 </button>
                             )}
                         </div>
-                    ) : null))}
+                    ))}
                 </div>
                 )}
             </div>

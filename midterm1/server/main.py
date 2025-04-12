@@ -15,11 +15,11 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 MONGO_URI = os.getenv("MONGO_URI")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 app = FastAPI()
 client = MongoClient(MONGO_URI)
 db = client["mydb"]
 users_collection = db["users"]
+pokemon_collection = db["pokemon"]
 
 origins = [
     "http://localhost",
@@ -54,7 +54,6 @@ async def root():
 @app.get("/pokemon")
 async def get_pokemon():
     try: 
-        pokemon_collection = db["pokemon"]
         all_pokemon = list(pokemon_collection.find({}, {"_id": 0}))
         return all_pokemon
     except Exception as e:
@@ -76,15 +75,31 @@ async def update_pokemon(pokemon: dict):
     return {"error": "Pokemon not found"}
 
 @app.post("/saved-pokemon")
-async def save_pokemon(request: PokemonRequest):
-    global saved_pokemon
-    saved_pokemon.add(request.pokemon_id)
-    return {"message": f"Pokemon with ID {request.pokemon_id} saved successfully!"}
+async def save_pokemon(request: PokemonRequest, token: str = Depends(oauth2_scheme)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    try:
+        users_collection.update_one(
+            {"username": username},
+            {"$addToSet": {"saved_pokemon": request.pokemon_id}}
+        )
+        print("Saved Pokemon ID:", request.pokemon_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/saved-pokemon")
-async def get_saved_pokemon():
-    # return the saved pokemon names
-    return list(saved_pokemon)
+async def get_saved_pokemon(token: str = Depends(oauth2_scheme)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    try:
+        user = users_collection.find_one({"username": username})
+        if user:
+            user_pokemon = user.get("saved_pokemon", [])
+            saved_pokemon_data = list(pokemon_collection.find({"pid": {"$in": user_pokemon}}, {"_id": 0}))
+            return saved_pokemon_data
+        return {"saved_pokemon": []}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/saved-pokemon")
 async def delete_saved_pokemon(request: PokemonRequest):
@@ -113,7 +128,8 @@ def register(user: User):
     print(users_collection)
     users_collection.insert_one({
         "username": user.username,
-        "hashed_password": hash_password(user.password)
+        "hashed_password": hash_password(user.password),
+        "saved_pokemon": []
     })
     return {"msg": "User registered successfully"}
 
