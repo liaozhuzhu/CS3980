@@ -53,19 +53,12 @@ async def root():
 
 @app.get("/pokemon")
 async def get_pokemon():
-    global cached_pokemon
-    if not cached_pokemon:
-        response = requests.get("https://pokeapi.co/api/v2/pokemon?limit=50")
-        pokemonNames = response.json()["results"]
-        all_pokemon = []
-        for pokemon in pokemonNames:
-            pokemon_response = requests.get(pokemon["url"])
-            pokemon_data = pokemon_response.json()
-            all_pokemon.append(pokemon_data)
-        cached_pokemon = all_pokemon
+    try: 
+        pokemon_collection = db["pokemon"]
+        all_pokemon = list(pokemon_collection.find({}, {"_id": 0}))
         return all_pokemon
-    else:
-        return cached_pokemon
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/pokemon')
 async def create_pokemon(pokemon: dict):

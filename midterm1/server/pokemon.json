@@ -1,0 +1,113 @@
+[
+    {
+      "height": 0.86,
+      "pid": 290,
+      "moves": [{"name": "Tackle"}, {"name": "Water Gun"}, {"name": "Ember"}, {"name": "Flamethrower"}],
+      "name": "Aquazor",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/202.png" },
+      "types": [{ "type": { "name": "Bug" } }, { "type": { "name": "Grass" } }],
+      "weight": 46.56,
+      "public": true,
+      "hp": 82
+    },
+    {
+      "height": 2.36,
+      "pid": 272,
+      "moves": [{"name": "Quick Attack"}, {"name": "Scratch"}],
+      "name": "Shellstrike",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/787.png" },
+      "types": [{ "type": { "name": "Normal" } }, { "type": { "name": "Bug" } }],
+      "weight": 137.14,
+      "public": true,
+      "hp": 110
+    },
+    {
+      "height": 0.51,
+      "pid": 224,
+      "moves": [{"name": "Tackle"}, {"name": "Flamethrower"}, {"name": "Quick Attack"}, {"name": "Ember"}],
+      "name": "Charmander",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png" },
+      "types": [{ "type": { "name": "Water" } }, { "type": { "name": "Fire" } }],
+      "weight": 125.14,
+      "public": true,
+      "hp": 108
+    },
+    {
+      "height": 2.14,
+      "pid": 452,
+      "moves": [{"name": "Thunderbolt"}],
+      "name": "Blazetpide",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/33.png" },
+      "types": [{ "type": { "name": "Fire" } }, { "type": { "name": "Psychic" } }],
+      "weight": 32.79,
+      "public": true,
+      "hp": 77
+    },
+    {
+      "height": 1.89,
+      "pid": 689,
+      "moves": [{"name": "Thunderbolt"}, {"name": "Flamethrower"}, {"name": "Water Gun"}, {"name": "Quick Attack"}, {"name": "Tackle"}],
+      "name": "Mewtwo",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/822.png" },
+      "types": [{ "type": { "name": "Water" } }, { "type": { "name": "Flying" } }],
+      "weight": 9.15,
+      "public": true,
+      "hp": 65
+    },
+    {
+      "height": 1.73,
+      "pid": 469,
+      "moves": [{"name": "Scratch"}],
+      "name": "Driftscale",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/721.png" },
+      "types": [{ "type": { "name": "Flying" } }],
+      "weight": 100.59,
+      "public": true,
+      "hp": 95
+    },
+    {
+      "height": 0.99,
+      "pid": 660,
+      "moves": [{"name": "Scratch"}, {"name": "Thunderbolt"}, {"name": "Tackle"}],
+      "name": "Verdash",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/288.png" },
+      "types": [{ "type": { "name": "Grass" } }],
+      "weight": 115.21,
+      "public": true,
+      "hp": 101
+    },
+    {
+      "height": 1.79,
+      "pid": 589,
+      "moves": [{"name": "Flamethrower"}, {"name": "Thunderbolt"}],
+      "name": "Eevee",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png" },
+      "types": [{ "type": { "name": "Normal" } }],
+      "weight": 76.5,
+      "public": true,
+      "hp": 89
+    },
+    {
+      "height": 2.28,
+      "pid": 349,
+      "moves": [{"name": "Water Gun"}, {"name": "Thunderbolt"}],
+      "name": "Bulbasaur",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/219.png" },
+      "types": [{ "type": { "name": "Grass" } }],
+      "weight": 50.68,
+      "public": true,
+      "hp": 81
+    },
+    {
+      "height": 0.59,
+      "pid": 772,
+      "moves": [{"name": "Flamethrower"}, {"name": "Thunderbolt"}],
+      "name": "Bugbite",
+      "sprites": { "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/44.png" },
+      "types": [{ "type": { "name": "Bug" } }],
+      "weight": 60.2,
+      "public": true,
+      "hp": 85
+    }
+  ]
+  

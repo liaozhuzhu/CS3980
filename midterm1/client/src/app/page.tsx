@@ -51,7 +51,7 @@ const Home = () => {
     <div className="flex w-full items-center justify-start min-h-screen">
       <div className="flex w-1/2 flex-col items-center justify-start p-5 h-[500px] overflow-y-scroll mt-10">
         {pokemon.map((pokemon) => (
-          <div key={pokemon.id} className="flex flex-col items-center justify-center w-full">
+          <div key={pokemon.pid} className="flex flex-col items-center justify-center w-full">
             <Tile pokemon={pokemon} setSelectedPokemon={setSelectedPokemon}/>
           </div>
         ))}
