@@ -76,12 +76,16 @@ async def create_pokemon(pokemon: dict):
 
 @app.put('/pokemon')
 async def update_pokemon(pokemon: dict):
-    global cached_pokemon
-    for i, p in enumerate(cached_pokemon):
-        if p['id'] == pokemon['id']:
-            cached_pokemon[i] = pokemon
-            return pokemon
-    return {"error": "Pokemon not found"}
+    pokemon_id = pokemon.get("pid")
+    if not pokemon_id:
+        raise HTTPException(status_code=400, detail="Pokemon ID is required")
+    result = pokemon_collection.update_one(
+        {"pid": pokemon_id},
+        {"$set": pokemon}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Pokemon not found")
+    return "Pokemon updated successfully!"
 
 @app.post("/saved-pokemon")
 async def save_pokemon(request: PokemonRequest, token: str = Depends(oauth2_scheme)):

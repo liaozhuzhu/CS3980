@@ -13,10 +13,9 @@ const Binder = () => {
         weight: number | string;
         moves: string[];
         hp: number | string;
-        id: number;
+        pid: number;
     }
-    const [savedPokemon, setSavedPokemon] = useState<number[]>([]);
-    const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
+    const [savedPokemon, setSavedPokemon] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [editPokemon, setEditPokemon] = useState<Pokemon | null>(null);
     const [username, setUsername] = useState<string | null>(null);
@@ -80,14 +79,12 @@ const Binder = () => {
             const res = await axios.put(`http://127.0.0.1:8000/pokemon`, editPokemon, {
                 headers: { "Content-Type": "application/json" },
             });
+            console.log(res);
     
-            // if (editPokemon) {
-            //     setAllPokemon(prev =>
-            //         prev.map(pokemon =>
-            //             pokemon.id === id ? editPokemon : pokemon
-            //         )
-            //     );
-            // }
+            if (editPokemon) {
+                console.log(savedPokemon)
+                setSavedPokemon(prev => prev.map(pokemon => pokemon.pid === editPokemon.pid ? editPokemon : pokemon));
+            }
             setEditPokemon(null);
         } catch (error) {
             console.error("Error editing Pokémon:", error);
@@ -161,7 +158,7 @@ const Binder = () => {
                             className="w-full p-3 border border-gray-600 rounded-md bg-black text-white focus:outline-none" 
                         />
                         <button 
-                            onClick={() => handleEdit(editPokemon.id)}
+                            onClick={() => handleEdit(editPokemon.pid)}
                             className="w-full cursor-pointer py-3 bg-zinc-200 text-zinc-950 rounded-md hover:bg-zinc-100 focus:outline-none"
                         >
                             Confirm
@@ -179,13 +176,13 @@ const Binder = () => {
                 ): (
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 items-start mt-10">
                     {savedPokemon.map((pokemon: any) => (
-                        <div className="relative self-start" key={pokemon.id}>
+                        <div className="relative self-start" key={pokemon.pid}>
                             <Card pokemon={pokemon} size="small"/>
                             <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
                                 <Minus size={20} />
                             </button>
-                            {!pokemon.public && (
-                                <button className="absolute right-[-10px] top-[-10px] bg-blue-500 w-6 h-6 hover:bg-blue-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => setEditPokemon(pokemon)}>
+                            {pokemon.user && (
+                                <button className="absolute right-[5px] top-[-10px] bg-blue-500 w-6 h-6 hover:bg-blue-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => setEditPokemon(pokemon)}>
                                     <Pencil size={12} />
                                 </button>
                             )}
