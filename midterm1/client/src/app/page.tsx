@@ -1,7 +1,7 @@
 'use client'
 
 import axios from 'axios'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Tile from '@/components/tile'
 import Card from '@/components/card'
 import { Download } from 'lucide-react'
@@ -16,17 +16,18 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Fetching data...");
       try {
         const res = await axios.get("http://127.0.0.1:8000/pokemon", {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user && user.token}`,
+            Authorization: `Bearer ${user?.token || ''}`,
           },
         });
         setPokemon(res.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
       }
     }
     fetchData();
@@ -34,7 +35,7 @@ const Home = () => {
 
   const savePokemon = async () => {
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://127.0.0.1:8000/saved-pokemon",
         { pokemon_id: selectedPokemon.pid }, 
         {

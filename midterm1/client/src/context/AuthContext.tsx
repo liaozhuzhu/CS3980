@@ -1,6 +1,6 @@
 'use client'
 // auth-context.tsx
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { useRef, createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
@@ -34,34 +34,34 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  // Function to check if the user is logged in
   const checkUser = async () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        // Make a request to your /me endpoint to validate the token
-        const res = await axios.get('http://localhost:8000/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
-        // Extract username from response and create user object
-        const userData: User = {
-          username: res.data.username,
-          token: token
-        };
-        
-        setUser(userData);
-      } catch (err) {
-        console.error('Token validation failed:', err);
-        localStorage.removeItem('token'); // Remove invalid token
-        setUser(null); // Invalid token
+    if (!token) {
+      if (user !== null) setUser(null); // only update if needed
+      return;
+    }
+  
+    try {
+      const res = await axios.get('http://localhost:8000/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const newUser: User = {
+        username: res.data.username,
+        token,
+      };
+  
+      // Avoid re-setting state if nothing changed
+      if (!user || user.username !== newUser.username || user.token !== newUser.token) {
+        setUser(newUser);
       }
-    } else {
-      setUser(null); // No token, not logged in
+    } catch (err) {
+      console.error('Token validation failed:', err);
+      localStorage.removeItem('token');
+      if (user !== null) setUser(null); // only reset if not already null
     }
   };
+  
 
   // Effect to check user login status on component mount
   useEffect(() => {
