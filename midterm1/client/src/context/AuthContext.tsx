@@ -3,10 +3,17 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+
+// Define proper user interface
+interface User {
+  username: string;
+  token: string;
+}
 
 // Define the shape of the AuthContext
 interface AuthContextType {
-  user: boolean;
+  user: User | null;
   login: (token: string) => void;
   logout: () => void;
   checkUser: () => Promise<void>;
@@ -15,7 +22,7 @@ interface AuthContextType {
 const AUTH_STATE_CHANGED = 'auth-state-changed';
 
 const AuthContext = createContext<AuthContextType>({
-  user: false,
+  user: null,
   login: () => {},
   logout: () => {},
   checkUser: async () => {},
@@ -24,7 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const [user, setUser] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   // Function to check if the user is logged in
@@ -33,19 +40,26 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     if (token) {
       try {
         // Make a request to your /me endpoint to validate the token
-        await axios.get('http://localhost:8000/me', {
+        const res = await axios.get('http://localhost:8000/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUser(true); // User is logged in
+        
+        // Extract username from response and create user object
+        const userData: User = {
+          username: res.data.username,
+          token: token
+        };
+        
+        setUser(userData);
       } catch (err) {
         console.error('Token validation failed:', err);
         localStorage.removeItem('token'); // Remove invalid token
-        setUser(false); // Invalid token
+        setUser(null); // Invalid token
       }
     } else {
-      setUser(false); // No token, not logged in
+      setUser(null); // No token, not logged in
     }
   };
 
@@ -79,18 +93,32 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   // Login function
   const login = (token: string) => {
     localStorage.setItem('token', token); // Store token in localStorage
-    setUser(true); // Update the state to logged in
     
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(new Event(AUTH_STATE_CHANGED));
+    try {
+      // Decode token to get user information
+      const decoded: any = jwtDecode(token);
+      
+      // Set user state with username from token
+      setUser({
+        username: decoded.sub,
+        token: token
+      });
+      
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event(AUTH_STATE_CHANGED));
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+    }
   };
 
   // Logout function
   const logout = () => {
     localStorage.removeItem('token'); // Remove token from localStorage
-    setUser(false); // Update the state to logged out
+    setUser(null); // Update the state to logged out
     
-    router.push('/login')
+    router.push('/login');
     window.dispatchEvent(new Event(AUTH_STATE_CHANGED));
   };
 

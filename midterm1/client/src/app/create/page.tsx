@@ -1,6 +1,8 @@
 'use client'
 import axios from 'axios'
-import { useState } from 'react'
+import {useRouter} from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/context/AuthContext';
 
 const Create = () => {
     type Pokemon = {
@@ -13,6 +15,8 @@ const Create = () => {
     }
 
     const [newPokemon, setNewPokemon] = useState<Pokemon>({ name: "", types: "", height: "", weight: "", moves: [], hp: "" });
+    const {user} = useAuth();
+    const router = useRouter();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -24,12 +28,16 @@ const Create = () => {
         if (!newPokemon.name || !newPokemon.types || !newPokemon.height || !newPokemon.weight || !newPokemon.moves || !newPokemon.hp) return;
     
         try {
-            const res = await axios.post("http://127.0.0.1:8000/pokemon", {...newPokemon, id: Math.floor(51 + Math.random() * 1000)}, {
+            if (!user) {
+                alert("User is not authenticated.");
+                return;
+            }
+            const res = await axios.post("http://127.0.0.1:8000/pokemon", {...newPokemon, pid: Math.floor(51 + Math.random() * 1000), user: user.username}, {
                 headers: { "Content-Type": "application/json" }
             });
             console.log(res.data);
             setNewPokemon({ name: "", types: "", height: "", weight: "", moves: [], hp: "" });
-            alert("Pokemon created successfully!");
+            router.push("/");
         } catch (error) {
             console.error("There was an error creating the Pokémon:", error);
             alert("Failed to create Pokémon.");

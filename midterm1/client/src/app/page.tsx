@@ -1,7 +1,7 @@
 'use client'
 
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Tile from '@/components/tile'
 import Card from '@/components/card'
 import { Download } from 'lucide-react'
@@ -12,13 +12,17 @@ const Home = () => {
   const [selectedPokemon, setSelectedPokemon] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);  // State to control popup visibility
-  const token = localStorage.getItem("token");
-  const { user } = useAuth();
+  const { user }: {user: any} = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/pokemon");
+        const res = await axios.get("http://127.0.0.1:8000/pokemon", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user && user.token}`,
+          },
+        });
         setPokemon(res.data);
         setLoading(false);
       } catch (error) {
@@ -26,7 +30,7 @@ const Home = () => {
       }
     }
     fetchData();
-  }, [])
+  }, []);
 
   const savePokemon = async () => {
     try {
@@ -36,7 +40,7 @@ const Home = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${user.token}`,
           },
         }
       );

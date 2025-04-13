@@ -52,18 +52,27 @@ async def root():
     return {"message": "Hello World"}
 
 @app.get("/pokemon")
-async def get_pokemon():
+async def get_pokemon(token: str = Depends(oauth2_scheme)):
     try: 
-        all_pokemon = list(pokemon_collection.find({}, {"_id": 0}))
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        # return all pokemon that have either attribute "public" or the "owner" that is the current user
+        all_pokemon = list(pokemon_collection.find({
+            "$or": [
+                {"public": True},
+                {"user": username}
+            ]
+        }, {"_id": 0}))
         return all_pokemon
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("no token")
+        all_pokemon = list(pokemon_collection.find({"public": True}, {"_id": 0}))
+        return all_pokemon
 
 @app.post('/pokemon')
 async def create_pokemon(pokemon: dict):
-    global cached_pokemon
-    cached_pokemon.append(pokemon)
-    return pokemon
+    pokemon_collection.insert_one(pokemon)
+    return "Pokemon created successfully!"
 
 @app.put('/pokemon')
 async def update_pokemon(pokemon: dict):
