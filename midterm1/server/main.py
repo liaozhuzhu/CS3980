@@ -115,10 +115,19 @@ async def get_saved_pokemon(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/saved-pokemon")
-async def delete_saved_pokemon(request: PokemonRequest):
-    global saved_pokemon
-    saved_pokemon.remove(request.pokemon_id)
-    return {"message": f"Pokemon with ID {request.pokemon_id} deleted successfully!"}
+async def delete_saved_pokemon(request: PokemonRequest, token: str = Depends(oauth2_scheme)):
+    pid = request.pokemon_id
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    try:
+        users_collection.update_one(
+            {                "username": username
+            },
+            {"$pull": {"saved_pokemon": pid}}
+        )
+        return {"msg": "Pokemon removed from saved list"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 
 
 # User Auth
 def verify_password(plain, hashed):

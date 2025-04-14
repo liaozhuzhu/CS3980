@@ -20,9 +20,9 @@ const Binder = () => {
     const [editPokemon, setEditPokemon] = useState<Pokemon | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const router = useRouter();
+    const token = localStorage.getItem("token");
     
     useEffect(() => {
-        const token = localStorage.getItem("token");
         const fetchSavedPokemon = async () => {
             try {
                 const res = await axios.get("http://127.0.0.1:8000/saved-pokemon", {
@@ -65,9 +65,11 @@ const Binder = () => {
         try {
             const res = await axios.delete("http://127.0.0.1:8000/saved-pokemon", {
                 data: { pokemon_id: id },
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
             });
-            setSavedPokemon(prev => prev.filter(pokemon => pokemon !== Number(id)));
+            setSavedPokemon(prev => prev.filter(pokemon => pokemon.pid !== Number(id)));
             setEditPokemon(null);
         } catch (error) {
             console.error("Error deleting Pokemon:", error);
@@ -178,7 +180,7 @@ const Binder = () => {
                     {savedPokemon.map((pokemon: any) => (
                         <div className="relative self-start" key={pokemon.pid}>
                             <Card pokemon={pokemon} size="small"/>
-                            <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.id)}>
+                            <button className="absolute left-[-10px] top-[-10px] bg-red-500 w-6 h-6 hover:bg-red-400 cursor-pointer transition duration-300 flex justify-center items-center rounded-full right-2" onClick={() => handleDelete(pokemon.pid)}>
                                 <Minus size={20} />
                             </button>
                             {pokemon.user && (
