@@ -30,12 +30,23 @@ pip3 install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-## Images
-Home Page:
-![home](home.png)
+## Images (Assignment 4)
+Home Page (Not Logged In):
+![home](home-not-loggedin.png)
 
-Binder:
+Home Page (Logged In):
+![home](home-loggedin.png)
+
+Binder (only available if loggedin):
 ![binder](binder.png)
 
 Create:
 ![create](create.png)
+
+## Models
+
+Models can be found in [main.py](./server/main.py)
+
+## Authentication
+
+Authentication is also handled in [main.py](/server/main.py) and includes SHA256 hashing algorithm for password encryption. The user can only see the main page (with public pokemon) if they're not signed in, otherwise if signed in they are able to see their binder and any pokemon they've created.
